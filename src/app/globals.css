@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* Design tokens / CSS variables for theming */
+:root {
+  --background: #0f1724; /* deep slate */
+  --surface: #0b1220; /* slightly darker */
+  --foreground: #e6eef8; /* soft off-white */
+  --muted: #9aa7b2;
+  --primary: #6c5ce7; /* violet */
+  --primary-600: #5a4ce0;
+  --accent: #00d4ff; /* cyan accent */
+  --glass: rgba(255, 255, 255, 0.04);
+  --radius: 12px;
+}
+
+/* Light theme (can be toggled with data-theme="light") */
+:root[data-theme="light"] {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --foreground: #0b1220;
+  --muted: #6b7280;
+  --primary: #2563eb; /* blue */
+  --primary-600: #1e40af;
+  --accent: #06b6d4;
+  --glass: rgba(0, 0, 0, 0.04);
+}
+
+/* Respect user preference by default */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --background: #ffffff;
+    --surface: #ffffff;
+    --foreground: #0b1220;
+    --muted: #6b7280;
+  }
+}
+
+/* Utility classes that rely on tokens so Tailwind doesn't need extra config */
+body {
+  background: radial-gradient(
+      1200px 800px at 10% 10%,
+      rgba(108, 92, 231, 0.06),
+      transparent
+    ),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(
+    --font-geist-sans,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial
+  );
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container-max {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--primary), var(--primary-600));
+  color: white;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.12);
+}
+
+.nav-link {
+  color: var(--muted);
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  transition: all 160ms ease;
+}
+.nav-link:hover {
+  color: var(--foreground);
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateY(-1px);
+}
+.nav-link.active {
+  color: white;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Mobile menu backdrop */
+.mobile-nav-backdrop {
+  backdrop-filter: blur(8px) saturate(1.1);
+  background: linear-gradient(
+    180deg,
+    rgba(11, 18, 32, 0.6),
+    rgba(11, 18, 32, 0.85)
+  );
+}
+
+/* Color swatch */
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+/* small helpers */
+.glass-card {
+  background: var(--glass);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+}
