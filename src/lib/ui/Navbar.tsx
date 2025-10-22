@@ -28,15 +28,12 @@ export default function LibNavbar({
   theme,
   className = "",
 }: LibNavbarProps) {
-  const navStyle: React.CSSProperties = theme
-    ? {
-        background: `linear-gradient(90deg, ${theme.primary}, ${
-          theme.primary600 || theme.primary
-        })`,
-      }
-    : {
-        background: "linear-gradient(90deg,var(--primary),var(--primary-600))",
-      };
+  const navStyle: React.CSSProperties = {
+    background:
+      theme?.primary && theme?.primary600
+        ? `linear-gradient(90deg, ${theme.primary}, ${theme.primary600})`
+        : "linear-gradient(90deg, var(--primary, #3b82f6), var(--primary-600, #2563eb))",
+  };
 
   return (
     <nav className={`w-full py-3 ${className}`} style={navStyle}>

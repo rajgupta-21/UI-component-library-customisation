@@ -1,35 +1,25 @@
 "use client";
-import Carousel from "@/lib/ui/Carousel";
+import Pagination from "@/lib/ui/Pagination";
 import { useState } from "react";
 
-export default function CarouselPreview() {
+export default function PaginationPreview() {
   const [vars, setVars] = useState<Record<string, string>>({});
-
-  const slides = [
-    <div className="h-48 flex items-center justify-center bg-red-300 text-white text-2xl rounded-xl">
-      Slide 1
-    </div>,
-    <div className="h-48 flex items-center justify-center bg-green-300 text-white text-2xl rounded-xl">
-      Slide 2
-    </div>,
-    <div className="h-48 flex items-center justify-center bg-blue-300 text-white text-2xl rounded-xl">
-      Slide 3
-    </div>,
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 10;
 
   function toStyleObjectString(obj: Record<string, string>) {
     const entries = Object.entries(obj).map(([k, v]) => `"${k}": "${v}"`);
     return `{{ ${entries.join(", ")} } as React.CSSProperties}`;
   }
 
-  const exportCode = `import React from 'react';\nimport { Carousel } from '@your-scope/newgen-ui';\n\nexport default function CustomCarousel(){\n  const slides = [\n    <div>Slide 1</div>,\n    <div>Slide 2</div>,\n    <div>Slide 3</div>\n  ];\n  return <div style=${toStyleObjectString(
+  const exportCode = `import React, { useState } from 'react';\nimport { Pagination } from '@your-scope/newgen-ui';\n\nexport default function CustomPagination(){\n  const [currentPage, setCurrentPage] = useState(1);\n  return <div style=${toStyleObjectString(
     vars
-  )}><Carousel slides={slides} /></div>\n}`;
+  )}><Pagination currentPage={currentPage} totalPages={10} onPageChange={setCurrentPage} /></div>\n}`;
 
   return (
     <div className="max-w-3xl mx-auto p-8 space-y-6 bg-white dark:bg-gray-900 min-h-screen">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-        Carousel
+        Pagination
       </h2>
 
       <div className="space-y-6">
@@ -41,19 +31,24 @@ export default function CarouselPreview() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Default
             </p>
-            <Carousel slides={slides} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
 
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Custom Theme
             </p>
-            <Carousel
-              slides={slides}
+            <Pagination
+              currentPage={3}
+              totalPages={8}
+              onPageChange={() => {}}
               theme={{
-                background: "#f0f9ff",
-                indicator: "#10b981",
-                inactiveIndicator: "#d1d5db",
+                primary: "#10b981",
+                primary600: "#059669",
               }}
             />
           </div>
@@ -62,12 +57,13 @@ export default function CarouselPreview() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Dark Theme
             </p>
-            <Carousel
-              slides={slides}
+            <Pagination
+              currentPage={5}
+              totalPages={12}
+              onPageChange={() => {}}
               theme={{
-                background: "#1f2937",
-                indicator: "#f59e0b",
-                inactiveIndicator: "#6b7280",
+                primary: "#6b7280",
+                primary600: "#4b5563",
               }}
             />
           </div>
@@ -80,47 +76,28 @@ export default function CarouselPreview() {
           <div className="space-y-3">
             <div>
               <label className="text-sm text-gray-600 dark:text-gray-400">
-                Background Color
+                Primary Color
               </label>
               <input
                 type="color"
-                defaultValue="#f3f3f3"
+                defaultValue="#3b82f6"
                 onChange={(e) =>
-                  setVars((prev) => ({
-                    ...prev,
-                    "--carousel-bg": e.target.value,
-                  }))
+                  setVars((prev) => ({ ...prev, "--primary": e.target.value }))
                 }
                 className="w-full h-10 rounded cursor-pointer"
               />
             </div>
             <div>
               <label className="text-sm text-gray-600 dark:text-gray-400">
-                Active Indicator Color
+                Primary 600
               </label>
               <input
                 type="color"
-                defaultValue="#7C3AED"
+                defaultValue="#2563eb"
                 onChange={(e) =>
                   setVars((prev) => ({
                     ...prev,
-                    "--carousel-indicator": e.target.value,
-                  }))
-                }
-                className="w-full h-10 rounded cursor-pointer"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 dark:text-gray-400">
-                Inactive Indicator Color
-              </label>
-              <input
-                type="color"
-                defaultValue="#999999"
-                onChange={(e) =>
-                  setVars((prev) => ({
-                    ...prev,
-                    "--carousel-inactive-indicator": e.target.value,
+                    "--primary-600": e.target.value,
                   }))
                 }
                 className="w-full h-10 rounded cursor-pointer"
@@ -135,35 +112,34 @@ export default function CarouselPreview() {
           Usage
         </h3>
         <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded text-sm overflow-x-auto">
-          <code>{`import { Carousel } from '@your-scope/newgen-ui';
-
-const slides = [
-  <div className="h-48 flex items-center justify-center bg-red-300">Slide 1</div>,
-  <div className="h-48 flex items-center justify-center bg-green-300">Slide 2</div>,
-  <div className="h-48 flex items-center justify-center bg-blue-300">Slide 3</div>
-];
+          <code>{`import { Pagination } from '@your-scope/newgen-ui';
 
 // Basic usage
-<Carousel slides={slides} />
-
-// Custom theme
-<Carousel 
-  slides={slides} 
-  theme={{
-    background: "#f0f9ff",
-    indicator: "#10b981",
-    inactiveIndicator: "#d1d5db"
-  }}
+<Pagination 
+  currentPage={currentPage} 
+  totalPages={10} 
+  onPageChange={setCurrentPage} 
 />
 
-// With custom slides
-const customSlides = [
-  <img src="image1.jpg" alt="Slide 1" />,
-  <img src="image2.jpg" alt="Slide 2" />,
-  <img src="image3.jpg" alt="Slide 3" />
-];
+// Custom theme
+<Pagination 
+  currentPage={currentPage} 
+  totalPages={10} 
+  onPageChange={setCurrentPage}
+  theme={{ primary: "#10b981", primary600: "#059669" }}
+/>
 
-<Carousel slides={customSlides} />`}</code>
+// With state management
+const [page, setPage] = useState(1);
+
+<Pagination 
+  currentPage={page} 
+  totalPages={totalPages} 
+  onPageChange={(newPage) => {
+    setPage(newPage);
+    // Fetch new data based on page
+  }}
+/>`}</code>
         </pre>
       </div>
 
@@ -192,18 +168,31 @@ const customSlides = [
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               <tr>
-                <td className="px-4 py-2 font-mono">slides</td>
-                <td className="px-4 py-2">React.ReactNode[]</td>
+                <td className="px-4 py-2 font-mono">currentPage</td>
+                <td className="px-4 py-2">number</td>
                 <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">Array of slide components</td>
+                <td className="px-4 py-2">The current active page number</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 font-mono">totalPages</td>
+                <td className="px-4 py-2">number</td>
+                <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2">Total number of pages</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 font-mono">onPageChange</td>
+                <td className="px-4 py-2">(page: number) void</td>
+                <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2">
+                  Callback function when page changes
+                </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 font-mono">theme</td>
                 <td className="px-4 py-2">object</td>
                 <td className="px-4 py-2">-</td>
                 <td className="px-4 py-2">
-                  Custom color theme with background, indicator, and
-                  inactiveIndicator
+                  Custom color theme with primary and primary600
                 </td>
               </tr>
               <tr>

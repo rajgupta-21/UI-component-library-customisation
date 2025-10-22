@@ -1,25 +1,30 @@
 import React from "react";
 
-export type CardProps = React.HTMLAttributes<HTMLDivElement> & {
+// Card Component
+type CardProps = React.HTMLAttributes<HTMLDivElement> & {
   title?: React.ReactNode;
   description?: React.ReactNode;
   footer?: React.ReactNode;
-  theme?: { primary?: string; primary600?: string; accent?: string };
+  variant?: "default" | "bordered" | "elevated" | "glass";
+  theme?: {
+    primary?: string;
+    primary600?: string;
+    accent?: string;
+  };
 };
 
 export default function Card({
   title,
   description,
   footer,
+  variant = "default",
   className = "",
   children,
   theme,
+  style,
   ...rest
 }: React.PropsWithChildren<CardProps>) {
-  // Prefer CSS variable-based styling so parent wrappers (preview pages)
-  // can set --primary / --primary-rgb via inline style and have the card react.
-  // If a theme prop is provided, compute rgba values from the hex and use those.
-  function hexToRgb(hex?: string): [number, number, number] | null {
+  function hexToRgb(hex?: string): string | null {
     if (!hex) return null;
     const h = hex.replace(/^#/, "");
     const full =
@@ -34,40 +39,79 @@ export default function Card({
     const r = (num >> 16) & 255;
     const g = (num >> 8) & 255;
     const b = num & 255;
-    return [r, g, b];
+    return `${r}, ${g}, ${b}`;
   }
 
-  let style: React.CSSProperties | undefined = {
-    // use CSS variables by default so LocalThemeControls (which sets them)
-    // will update the card automatically
-    background: "rgba(var(--primary-rgb),0.12)",
-    boxShadow: "0 8px 30px rgba(var(--primary-rgb),0.06)",
+  const getCardStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = { ...style };
+
+    // Check if theme prop is provided
+    if (theme?.primary) {
+      const rgb = hexToRgb(theme.primary);
+      if (rgb) {
+        if (variant === "glass") {
+          baseStyle.background = `rgba(${rgb}, 0.05)`;
+          baseStyle.borderColor = `rgba(${rgb}, 0.2)`;
+          baseStyle.backdropFilter = "blur(10px)";
+        } else if (variant === "elevated") {
+          baseStyle.boxShadow = `0 8px 30px rgba(${rgb}, 0.12)`;
+          baseStyle.borderColor = `rgba(${rgb}, 0.1)`;
+        } else if (variant === "bordered") {
+          baseStyle.borderColor = `rgba(${rgb}, 0.3)`;
+        }
+      }
+    } else {
+      // Use CSS variables from parent (color picker)
+      if (variant === "glass") {
+        baseStyle.background = "rgba(var(--primary-rgb, 59, 130, 246), 0.05)";
+        baseStyle.borderColor = "rgba(var(--primary-rgb, 59, 130, 246), 0.2)";
+        baseStyle.backdropFilter = "blur(10px)";
+      } else if (variant === "elevated") {
+        baseStyle.boxShadow =
+          "0 8px 30px rgba(var(--primary-rgb, 59, 130, 246), 0.12)";
+        baseStyle.borderColor = "rgba(var(--primary-rgb, 59, 130, 246), 0.1)";
+      } else if (variant === "bordered") {
+        baseStyle.borderColor = "var(--primary, #3b82f6)";
+      }
+    }
+
+    return baseStyle;
   };
 
-  if (theme?.primary) {
-    const rgb = hexToRgb(theme.primary);
-    if (rgb) {
-      const [r, g, b] = rgb;
-      style = {
-        borderColor: `rgba(${r}, ${g}, ${b}, 0.12)`,
-        boxShadow: `0 8px 30px rgba(${r}, ${g}, ${b}, 0.06)`,
-      };
-    }
-  }
+  const variantClasses = {
+    default:
+      "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+    bordered: "bg-white dark:bg-gray-800 border-2",
+    elevated: "bg-white dark:bg-gray-800 border",
+    glass: "backdrop-blur-sm border",
+  }[variant];
+
+  const cardClasses = `
+    p-6 rounded-2xl
+    transition-all duration-200
+    ${variantClasses}
+    ${className}
+  `
+    .trim()
+    .replace(/\s+/g, " ");
 
   return (
-    <div
-      className={` border p-6 rounded-2xl ${className}`}
-      style={style}
-      {...rest}
-    >
-      {title && <h3 className="text-xl font-semibold mb-1">{title}</h3>}
-      {description && (
-        <p className="text-sm text-[var(--muted)] mb-3">{description}</p>
+    <div className={cardClasses} style={getCardStyle()} {...rest}>
+      {title && (
+        <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+          {title}
+        </h3>
       )}
-      <div>{children}</div>
+      {description && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          {description}
+        </p>
+      )}
+      <div className="text-gray-700 dark:text-gray-300">{children}</div>
       {footer && (
-        <div className="mt-4 text-sm text-[var(--muted)]">{footer}</div>
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
+          {footer}
+        </div>
       )}
     </div>
   );

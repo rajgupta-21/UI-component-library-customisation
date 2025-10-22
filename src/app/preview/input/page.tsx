@@ -1,26 +1,24 @@
 "use client";
-import Dialog from "@/lib/ui/Dialog";
+import Input from "@/lib/ui/Input";
 import { useState } from "react";
 
-export default function DialogPreview() {
+export default function InputPreview() {
   const [vars, setVars] = useState<Record<string, string>>({});
-  const [open, setOpen] = useState(false);
-  const [openCustom, setOpenCustom] = useState(false);
-  const [openDark, setOpenDark] = useState(false);
+  const [value, setValue] = useState("");
 
   function toStyleObjectString(obj: Record<string, string>) {
     const entries = Object.entries(obj).map(([k, v]) => `"${k}": "${v}"`);
     return `{{ ${entries.join(", ")} } as React.CSSProperties}`;
   }
 
-  const exportCode = `import React, { useState } from 'react';\nimport { Dialog } from '@your-scope/newgen-ui';\n\nexport default function CustomDialog(){\n  const [open, setOpen] = useState(false);\n  return (\n    <div style=${toStyleObjectString(
+  const exportCode = `import React, { useState } from 'react';\nimport { Input } from '@your-scope/newgen-ui';\n\nexport default function CustomInput(){\n  const [value, setValue] = useState('');\n  return <div style=${toStyleObjectString(
     vars
-  )}>\n      <button onClick={() => setOpen(true)}>Open Dialog</button>\n      <Dialog open={open} onClose={() => setOpen(false)} title="Custom Dialog">\n        <p>Your dialog content here.</p>\n      </Dialog>\n    </div>\n  );\n}`;
+  )}><Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Enter text..." /></div>\n}`;
 
   return (
     <div className="max-w-3xl mx-auto p-8 space-y-6 bg-white dark:bg-gray-900 min-h-screen">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-        Dialog
+        Input
       </h2>
 
       <div className="space-y-6">
@@ -32,72 +30,57 @@ export default function DialogPreview() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Default
             </p>
-            <button
-              onClick={() => setOpen(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Open Dialog
-            </button>
-            <Dialog
-              open={open}
-              onClose={() => setOpen(false)}
-              title="Dialog Title"
-            >
-              <p className="text-gray-700 dark:text-gray-300">
-                This is a default dialog. You can customize its appearance using
-                the theme options below.
-              </p>
-            </Dialog>
+            <Input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Enter text..."
+            />
           </div>
 
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Custom Theme
             </p>
-            <button
-              onClick={() => setOpenCustom(true)}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Open Custom Dialog
-            </button>
-            <Dialog
-              open={openCustom}
-              onClose={() => setOpenCustom(false)}
-              title="Custom Dialog"
+            <Input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Custom themed input..."
               theme={{
-                primary: "#10b981",
-                primary600: "#059669",
-                background: "#f0fdf4",
+                background: "#f8f9fa",
+                text: "#495057",
+                border: "#10b981",
               }}
-            >
-              <p className="text-gray-700 dark:text-gray-300">
-                This dialog uses a custom green theme.
-              </p>
-            </Dialog>
+            />
           </div>
 
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Dark Theme
             </p>
-            <button
-              onClick={() => setOpenDark(true)}
-              className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
-            >
-              Open Dark Dialog
-            </button>
-            <Dialog
-              open={openDark}
-              onClose={() => setOpenDark(false)}
-              title="Dark Dialog"
+            <Input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Dark themed input..."
               theme={{
-                primary: "#374151",
-                primary600: "#1f2937",
                 background: "#1f2937",
+                text: "#ffffff",
+                border: "#6b7280",
               }}
-            >
-              <p className="text-white">This dialog uses a dark theme.</p>
-            </Dialog>
+            />
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              Different Types
+            </p>
+            <div className="space-y-2 ">
+              <Input type="email" placeholder="Email" />
+            </div>
+            <div className="space-y-2">
+              {" "}
+              <Input type="password" placeholder="Password" />
+              <Input type="number" placeholder="Number" />
+            </div>
           </div>
         </div>
 
@@ -108,45 +91,13 @@ export default function DialogPreview() {
           <div className="space-y-3">
             <div>
               <label className="text-sm text-gray-600 dark:text-gray-400">
-                Primary Color
-              </label>
-              <input
-                type="color"
-                defaultValue="#3b82f6"
-                onChange={(e) =>
-                  setVars((prev) => ({ ...prev, "--primary": e.target.value }))
-                }
-                className="w-full h-10 rounded cursor-pointer"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 dark:text-gray-400">
-                Primary 600
-              </label>
-              <input
-                type="color"
-                defaultValue="#2563eb"
-                onChange={(e) =>
-                  setVars((prev) => ({
-                    ...prev,
-                    "--primary-600": e.target.value,
-                  }))
-                }
-                className="w-full h-10 rounded cursor-pointer"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 dark:text-gray-400">
                 Background Color
               </label>
               <input
                 type="color"
                 defaultValue="#ffffff"
                 onChange={(e) =>
-                  setVars((prev) => ({
-                    ...prev,
-                    "--dialog-bg": e.target.value,
-                  }))
+                  setVars((prev) => ({ ...prev, "--input-bg": e.target.value }))
                 }
                 className="w-full h-10 rounded cursor-pointer"
               />
@@ -161,7 +112,39 @@ export default function DialogPreview() {
                 onChange={(e) =>
                   setVars((prev) => ({
                     ...prev,
-                    "--dialog-text": e.target.value,
+                    "--input-text": e.target.value,
+                  }))
+                }
+                className="w-full h-10 rounded cursor-pointer"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600 dark:text-gray-400">
+                Border Color
+              </label>
+              <input
+                type="color"
+                defaultValue="#d1d5db"
+                onChange={(e) =>
+                  setVars((prev) => ({
+                    ...prev,
+                    "--input-border": e.target.value,
+                  }))
+                }
+                className="w-full h-10 rounded cursor-pointer"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600 dark:text-gray-400">
+                Primary Color (Focus)
+              </label>
+              <input
+                type="color"
+                defaultValue="#3b82f6"
+                onChange={(e) =>
+                  setVars((prev) => ({
+                    ...prev,
+                    "--primary": e.target.value,
                   }))
                 }
                 className="w-full h-10 rounded cursor-pointer"
@@ -176,31 +159,39 @@ export default function DialogPreview() {
           Usage
         </h3>
         <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded text-sm overflow-x-auto">
-          <code>{`import { Dialog } from '@your-scope/newgen-ui';
+          <code>{`import { Input } from '@your-scope/newgen-ui';
 
 // Basic usage
-<Dialog open={isOpen} onClose={() => setIsOpen(false)} title="Dialog Title">
-  <p>Your content here.</p>
-</Dialog>
+<Input 
+  value={value} 
+  onChange={(e) => setValue(e.target.value)} 
+  placeholder="Enter text..." 
+/>
 
 // Custom theme
-<Dialog 
-  open={isOpen} 
-  onClose={() => setIsOpen(false)} 
-  title="Custom Dialog"
+<Input 
+  value={value} 
+  onChange={(e) => setValue(e.target.value)} 
+  placeholder="Custom input..."
   theme={{
-    primary: "#10b981",
-    primary600: "#059669",
-    background: "#f0fdf4"
+    background: "#f8f9fa",
+    text: "#495057",
+    border: "#10b981"
   }}
->
-  <p>Custom themed content.</p>
-</Dialog>
+/>
 
-// Without title
-<Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-  <p>Content without a title.</p>
-</Dialog>`}</code>
+// Different types
+<Input type="email" placeholder="Email" />
+<Input type="password" placeholder="Password" />
+<Input type="number" placeholder="Number" />
+
+// With validation
+<Input 
+  type="email" 
+  required 
+  placeholder="Email" 
+  className="w-full" 
+/>`}</code>
         </pre>
       </div>
 
@@ -229,33 +220,28 @@ export default function DialogPreview() {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               <tr>
-                <td className="px-4 py-2 font-mono">open</td>
-                <td className="px-4 py-2">boolean</td>
+                <td className="px-4 py-2 font-mono">value</td>
+                <td className="px-4 py-2">string | number</td>
                 <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">
-                  Controls whether the dialog is visible
-                </td>
+                <td className="px-4 py-2">The value of the input</td>
               </tr>
               <tr>
-                <td className="px-4 py-2 font-mono">onClose</td>
-                <td className="px-4 py-2">() void</td>
+                <td className="px-4 py-2 font-mono">onChange</td>
                 <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">
-                  Function called when the dialog should close
-                </td>
+                <td className="px-4 py-2">Callback when input value changes</td>
               </tr>
               <tr>
-                <td className="px-4 py-2 font-mono">title</td>
+                <td className="px-4 py-2 font-mono">placeholder</td>
                 <td className="px-4 py-2">string</td>
                 <td className="px-4 py-2">-</td>
-                <td className="px-4 py-2">Optional title for the dialog</td>
+                <td className="px-4 py-2">Placeholder text</td>
               </tr>
               <tr>
-                <td className="px-4 py-2 font-mono">children</td>
-                <td className="px-4 py-2">React.ReactNode</td>
-                <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2 font-mono">type</td>
+                <td className="px-4 py-2">string</td>
+                <td className="px-4 py-2">"text"</td>
                 <td className="px-4 py-2">
-                  Content to display inside the dialog
+                  Input type (text, email, password, etc.)
                 </td>
               </tr>
               <tr>
@@ -263,8 +249,7 @@ export default function DialogPreview() {
                 <td className="px-4 py-2">object</td>
                 <td className="px-4 py-2">-</td>
                 <td className="px-4 py-2">
-                  Custom color theme with primary, primary600, accent, and
-                  background
+                  Custom color theme with background, text, border, and primary
                 </td>
               </tr>
               <tr>
@@ -272,6 +257,12 @@ export default function DialogPreview() {
                 <td className="px-4 py-2">string</td>
                 <td className="px-4 py-2">""</td>
                 <td className="px-4 py-2">Additional CSS classes</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 font-mono">...rest</td>
+                <td className="px-4 py-2">InputHTMLAttributes</td>
+                <td className="px-4 py-2">-</td>
+                <td className="px-4 py-2">Other standard input attributes</td>
               </tr>
             </tbody>
           </table>

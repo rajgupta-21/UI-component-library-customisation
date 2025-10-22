@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 export interface DialogProps {
@@ -11,6 +12,7 @@ export interface DialogProps {
     accent?: string;
     background?: string;
   };
+  className?: string;
 }
 
 export default function Dialog({
@@ -19,39 +21,34 @@ export default function Dialog({
   title,
   children,
   theme,
+  className = "",
 }: DialogProps) {
   if (!open) return null;
 
-  const overlayStyle = {
+  const overlayStyle: React.CSSProperties = {
     background: "rgba(0, 0, 0, 0.4)",
-  } as React.CSSProperties;
+  };
 
-  const dialogStyle = theme
-    ? ({
-        background: theme.primary || "white",
-        border: `4px solid ${theme.primary || "var(--primary)"}`,
-        color: "var(--text-color, #111)",
-        transition: "all 0.2s ease-in-out",
-      } as React.CSSProperties)
-    : ({
-        background: "var(--background, white)",
-        borderTop: "5px solid var(--primary)",
-      } as React.CSSProperties);
+  const dialogStyle: React.CSSProperties = {
+    background: theme?.background || "var(--dialog-bg, #ffffff)",
+    borderTop: `5px solid ${theme?.primary || "var(--primary, #3b82f6)"}`,
+    color: "var(--dialog-text, #111111)",
+  };
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center"
+      className="fixed inset-0 flex items-center justify-center z-50"
       style={overlayStyle}
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-lg  max-w-md p-6 relative"
+        className={`bg-white rounded-lg shadow-lg max-w-md p-6 relative ${className}`}
         style={dialogStyle}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-3 text-gray-600 hover:text-gray-800"
+          className="absolute right-4 top-3 text-gray-600 hover:text-gray-800 transition-colors"
         >
           ✕
         </button>
